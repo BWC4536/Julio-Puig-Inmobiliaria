@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Search, Phone, MessageCircle, Mail, X, Star, ChevronDown, Check, Eye, Trash2 } from 'lucide-react';
+import { Search, Phone, MessageCircle, Mail, X, Star, ChevronDown, Check, Eye, Trash2, Heart, Clock, Bell } from 'lucide-react';
 import { properties } from '../data';
+import { useFavorites } from '../../hooks/useFavorites';
 
 const NAVY = '#1A365D';
 const ACCENT = '#C9A84C';
@@ -145,6 +146,8 @@ export function AdminContactos() {
   const [filterStatus, setFilterStatus] = useState<LeadStatus | ''>('');
   const [filterSource, setFilterSource] = useState<Lead['source'] | ''>('');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [tab, setTab] = useState<'contactos' | 'automatizaciones'>('contactos');
+  const { favorites } = useFavorites();
 
   const filtered = leads.filter(l => {
     if (filterStatus && l.status !== filterStatus) return false;
@@ -167,13 +170,32 @@ export function AdminContactos() {
     <div style={{ padding: '32px 32px 48px' }}>
       {selectedLead && <LeadModal lead={selectedLead} onClose={() => setSelectedLead(null)} />}
 
-      {/* Header */}
-      <div className="mb-7">
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.7rem', fontWeight: 600, color: NAVY }}>Contactos</h1>
-        <p style={{ fontSize: '13px', color: 'var(--muted-foreground)', marginTop: '3px' }}>{leads.length} leads registrados</p>
+      {/* Header & Tabs */}
+      <div className="mb-7 flex flex-col gap-5">
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.7rem', fontWeight: 600, color: NAVY }}>Gestión de Leads</h1>
+          <p style={{ fontSize: '13px', color: 'var(--muted-foreground)', marginTop: '3px' }}>Control de contactos y automatizaciones</p>
+        </div>
+        <div className="flex gap-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <button
+            onClick={() => setTab('contactos')}
+            style={{ paddingBottom: '12px', fontSize: '13px', fontWeight: 600, borderBottom: tab === 'contactos' ? `2px solid ${NAVY}` : '2px solid transparent', color: tab === 'contactos' ? NAVY : 'var(--muted-foreground)' }}
+          >
+            Contactos Directos
+          </button>
+          <button
+            onClick={() => setTab('automatizaciones')}
+            className="flex items-center gap-2"
+            style={{ paddingBottom: '12px', fontSize: '13px', fontWeight: 600, borderBottom: tab === 'automatizaciones' ? `2px solid ${NAVY}` : '2px solid transparent', color: tab === 'automatizaciones' ? NAVY : 'var(--muted-foreground)' }}
+          >
+            Automatizaciones <span style={{ backgroundColor: '#e11d48', color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '10px' }}>{favorites.length + 2}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Summary cards */}
+      {tab === 'contactos' ? (
+        <>
+          {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-7">
         {[
           { label: 'Nuevos', value: totals.nuevo, color: '#1565C0', bg: '#E3F2FD' },
@@ -280,6 +302,55 @@ export function AdminContactos() {
           </table>
         </div>
       </div>
+        </>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <div style={{ backgroundColor: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: '8px', padding: '24px' }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div style={{ padding: '8px', backgroundColor: '#FFF0F0', borderRadius: '8px' }}><Heart size={18} color="#e11d48" /></div>
+              <h2 style={{ fontSize: '16px', fontWeight: 600, color: NAVY }}>Alertas de Favoritos (Bajada de Precio)</h2>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--muted-foreground)', marginBottom: '16px' }}>Usuarios que han guardado una propiedad y esperan notificación si baja el precio.</p>
+            {favorites.length === 0 ? (
+              <p style={{ fontSize: '13px', color: 'var(--muted-foreground)', fontStyle: 'italic' }}>No hay favoritos guardados aún. (Prueba a guardar una propiedad en la web)</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {favorites.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between p-4" style={{ border: '1px solid rgba(0,0,0,0.05)', borderRadius: '6px', backgroundColor: '#FAFAFA' }}>
+                    <div>
+                      <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--foreground)' }}>{f.email}</p>
+                      <p style={{ fontSize: '12px', color: 'var(--muted-foreground)' }}>Esperando por: <strong style={{ color: NAVY }}>{f.title}</strong> (Guardado en {f.priceAtTime.toLocaleString('es-ES')}€)</p>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--muted-foreground)' }}>{new Date(f.savedAt).toLocaleDateString('es-ES')}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ backgroundColor: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: '8px', padding: '24px' }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div style={{ padding: '8px', backgroundColor: '#E3F2FD', borderRadius: '8px' }}><Clock size={18} color="#1565C0" /></div>
+              <h2 style={{ fontSize: '16px', fontWeight: 600, color: NAVY }}>Reenganche automático (A los 7 días)</h2>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--muted-foreground)', marginBottom: '16px' }}>Leads que contactaron hace más de 7 días pero no compraron. El sistema les enviará un email con nuevas propiedades similares.</p>
+            <div className="flex flex-col gap-3">
+              {[
+                { name: 'Laura Sánchez Torres', email: 'laura.s@outlook.com', days: 8, target: 'Pisos en Sevilla Este' },
+                { name: 'Patricia Vega Moreno', email: 'p.vega@empresa.com', days: 15, target: 'Adosados en Gines' }
+              ].map((l, i) => (
+                <div key={i} className="flex items-center justify-between p-4" style={{ border: '1px solid rgba(0,0,0,0.05)', borderRadius: '6px', backgroundColor: '#FAFAFA' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--foreground)' }}>{l.name} <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--muted-foreground)' }}>({l.email})</span></p>
+                    <p style={{ fontSize: '12px', color: 'var(--muted-foreground)' }}>Interés detectado: <strong style={{ color: NAVY }}>{l.target}</strong></p>
+                  </div>
+                  <button style={{ fontSize: '12px', fontWeight: 600, backgroundColor: NAVY, color: '#fff', padding: '6px 12px', borderRadius: '4px' }}>Ver borrador email</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

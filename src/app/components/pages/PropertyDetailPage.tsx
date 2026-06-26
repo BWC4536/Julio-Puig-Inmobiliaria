@@ -3,10 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router';
 import {
   Bed, Bath, Maximize2, ArrowLeft, ChevronLeft, ChevronRight,
   X, MapPin, Calendar, Layers, Compass, Zap, Car, Waves,
-  ShieldCheck, ArrowRight, Phone,
+  ShieldCheck, ArrowRight, Phone, Heart,
 } from 'lucide-react';
 import { properties, formatPrice } from '../data';
 import { PropertyCard } from '../PropertyCard';
+import { useFavorites } from '../../hooks/useFavorites';
 
 function TagBadge({ tag }: { tag: string }) {
   const isVendido = tag === 'VENDIDO';
@@ -180,10 +181,96 @@ function EnergyBadge({ cert }: { cert: string }) {
   );
 }
 
+// ─── Favorite Modal ───────────────────────────────────────────────────────────
+function FavoriteModal({
+  propertyId, propertyTitle, propertyPrice, onClose,
+}: {
+  propertyId: number; propertyTitle: string; propertyPrice: number; onClose: () => void;
+}) {
+  const { addFavorite, isFavorited } = useFavorites();
+  const [email, setEmail] = useState('');
+  const [step, setStep] = useState<'form' | 'done'>('form');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.includes('@')) { setError('Introduce un email válido'); return; }
+    addFavorite({ propertyId, email, priceAtTime: propertyPrice, title: propertyTitle, savedAt: new Date().toISOString() });
+    setStep('done');
+  };
+
+  return (
+    <div className="fixed inset-0 z-[300] flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.55)' }} onClick={onClose}>
+      <div
+        className="w-full max-w-sm mx-4 bg-white rounded-xl shadow-2xl overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.08)', backgroundColor: 'var(--primary)' }}>
+          <div className="flex items-center gap-2">
+            <Heart size={16} fill="#fff" color="#fff" />
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 600, color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Guardar propiedad</span>
+          </div>
+          <button onClick={onClose} style={{ color: 'rgba(255,255,255,0.6)' }}><X size={18} /></button>
+        </div>
+        {step === 'done' ? (
+          <div className="p-8 flex flex-col items-center gap-4 text-center">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFF0F0' }}>
+              <Heart size={22} fill="#e11d48" color="#e11d48" />
+            </div>
+            <div>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 600, color: 'var(--foreground)' }}>¡Guardado!</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: 'var(--muted-foreground)', marginTop: '6px', lineHeight: 1.6 }}>
+                Te avisaremos en <strong style={{ color: 'var(--foreground)' }}>{email}</strong> si el precio de esta propiedad baja.
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-full py-3 transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 600, borderRadius: '6px' }}
+            >
+              Entendido
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
+              Introduce tu email y te notificaremos automáticamente si el precio de <strong style={{ color: 'var(--foreground)' }}>{propertyTitle}</strong> baja.
+            </p>
+            <div className="flex flex-col gap-1.5">
+              <label style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted-foreground)' }}>Tu email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => { setEmail(e.target.value); setError(''); }}
+                placeholder="tu@email.com"
+                style={{ padding: '11px 14px', border: `1px solid ${error ? '#e11d48' : 'var(--border)'}`, borderRadius: '6px', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none', width: '100%' }}
+              />
+              {error && <span style={{ fontSize: '12px', color: '#e11d48' }}>{error}</span>}
+            </div>
+            <button
+              type="submit"
+              className="flex items-center justify-center gap-2 py-3 transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 600, borderRadius: '6px' }}
+            >
+              <Heart size={14} />
+              Guardar y recibir alertas
+            </button>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '11px', color: 'var(--muted-foreground)', textAlign: 'center' }}>Sin spam. Solo te escribimos si el precio baja.</p>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const property = properties.find((p) => p.id === Number(id));
+
+  const { isFavorited } = useFavorites();
+  const [showFavModal, setShowFavModal] = useState(false);
 
   if (!property) {
     return (
@@ -207,6 +294,7 @@ export function PropertyDetailPage() {
 
   const related = properties.filter((p) => p.id !== property.id && p.type === property.type).slice(0, 3);
   const whatsappMsg = encodeURIComponent(`Hola Julio, me interesa la propiedad "${property.title}" en ${property.location}. ¿Podría obtener más información?`);
+  const favorited = isFavorited(property.id);
 
   const techSpecs = [
     property.beds && { icon: <Bed size={14} strokeWidth={1.5} />, label: `${property.beds} habitaciones` },
@@ -223,6 +311,14 @@ export function PropertyDetailPage() {
 
   return (
     <div style={{ paddingTop: '64px', backgroundColor: 'var(--background)', minHeight: '100vh' }}>
+      {showFavModal && property && (
+        <FavoriteModal
+          propertyId={property.id}
+          propertyTitle={property.title}
+          propertyPrice={property.price}
+          onClose={() => setShowFavModal(false)}
+        />
+      )}
       {/* Breadcrumb */}
       <div style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'var(--card)' }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center gap-3 flex-wrap">
@@ -303,7 +399,7 @@ export function PropertyDetailPage() {
                 </span>
               </div>
               {/* Price — visible on mobile only here, hidden on desktop (shown in sticky panel) */}
-              <div className="lg:hidden">
+              <div className="lg:hidden flex items-center justify-between">
                 <p
                   style={{
                     fontFamily: 'var(--font-display)',
@@ -315,6 +411,17 @@ export function PropertyDetailPage() {
                 >
                   {formatPrice(property.price)}
                 </p>
+                <button
+                  onClick={() => setShowFavModal(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 transition-all hover:scale-105"
+                  style={{ border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: '#fff' }}
+                  title="Guardar propiedad"
+                >
+                  <Heart size={16} style={{ color: '#e11d48' }} fill={favorited ? '#e11d48' : 'none'} />
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '12px', color: 'var(--muted-foreground)' }}>
+                    {favorited ? 'Guardada' : 'Guardar'}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -413,13 +520,21 @@ export function PropertyDetailPage() {
                 Consultar por WhatsApp
               </a>
               <a
-                href="tel:+34600123456"
+                href="tel:+34633717714"
                 className="flex items-center justify-center gap-2 py-4 no-underline transition-opacity hover:opacity-90"
-                style={{ backgroundColor: 'var(--primary)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 600, letterSpacing: '0.08em' }}
+                style={{ border: '1px solid var(--border)', color: 'var(--foreground)', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 600, letterSpacing: '0.08em', backgroundColor: '#fff' }}
               >
-                <Phone size={14} />
-                +34 600 123 456
+                <Phone size={14} className="text-primary" />
+                +34 633 717 714
               </a>
+              <Link
+                to="/nosotros#contacto"
+                className="flex items-center justify-center gap-2 py-4 no-underline transition-opacity hover:opacity-90"
+                style={{ backgroundColor: 'var(--primary)', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}
+              >
+                <Calendar size={14} />
+                Agendar visita
+              </Link>
             </div>
           </div>
 
@@ -433,8 +548,8 @@ export function PropertyDetailPage() {
               top: '88px',
             }}
           >
-            {/* Price */}
-            <div className="flex flex-col gap-1">
+            {/* Price + Favorite */}
+            <div className="flex flex-col gap-2">
               <span
                 style={{
                   fontFamily: 'var(--font-body)',
@@ -447,18 +562,30 @@ export function PropertyDetailPage() {
               >
                 Precio de venta
               </span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '2.2rem',
-                  fontWeight: 700,
-                  color: 'var(--primary)',
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1,
-                }}
-              >
-                {formatPrice(property.price)}
-              </span>
+              <div className="flex items-center justify-between">
+                <span
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '2.2rem',
+                    fontWeight: 700,
+                    color: 'var(--primary)',
+                    letterSpacing: '-0.03em',
+                    lineHeight: 1,
+                  }}
+                >
+                  {formatPrice(property.price)}
+                </span>
+                <button
+                  onClick={() => setShowFavModal(true)}
+                  className="flex flex-col items-center gap-0.5 p-2 transition-all hover:scale-110"
+                  title={favorited ? 'Ya guardada' : 'Guardar y recibir alerta de precio'}
+                >
+                  <Heart size={20} style={{ color: '#e11d48' }} fill={favorited ? '#e11d48' : 'none'} />
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', color: 'var(--muted-foreground)' }}>
+                    {favorited ? 'Guardada' : 'Guardar'}
+                  </span>
+                </button>
+              </div>
             </div>
 
             <div style={{ height: '1px', backgroundColor: 'var(--border)' }} />
