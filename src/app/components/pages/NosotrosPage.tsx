@@ -38,7 +38,7 @@ function AgentSection() {
                 }}
               />
               <img
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&h=750&fit=crop&auto=format"
+                src="/profile.png"
                 alt="Julio Puig — Agente Inmobiliario en Sevilla"
                 className="relative block w-full object-cover object-top"
                 style={{
@@ -494,7 +494,7 @@ function MortgageCalculator() {
                 * Cálculo orientativo. No incluye seguros ni comisiones bancarias.
               </p>
               <a
-                href="https://wa.me/34600123456?text=Hola%20Julio%2C%20me%20gustar%C3%ADa%20hablar%20sobre%20financiaci%C3%B3n%20hipotecaria"
+                href="https://wa.me/34633717714?text=Hola%20Julio%2C%20me%20gustar%C3%ADa%20hablar%20sobre%20financiaci%C3%B3n%20hipotecaria"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3.5 no-underline transition-opacity hover:opacity-90"
@@ -582,9 +582,9 @@ function ContactSection() {
 
             <div className="flex flex-col gap-5">
               {[
-                { icon: Phone, label: '+34 600 123 456', href: 'tel:+34600123456' },
-                { icon: Mail, label: 'hola@juliopuig.es', href: 'mailto:hola@juliopuig.es' },
-                { icon: MapPin, label: 'Av. de la Borbolla 12, 41004 Sevilla', href: '#' },
+                { icon: Phone, label: '+34 633 717 714', href: 'tel:+34633717714' },
+                { icon: Mail, label: 'juliopuig.inmobiliaria@gmail.com', href: 'mailto:juliopuig.inmobiliaria@gmail.com' },
+                { icon: MapPin, label: 'Calle Cervantes, 70, Coria del Río, 41100', href: 'https://maps.app.goo.gl/HYSv5ExywRBpZfgr9' },
               ].map(({ icon: Icon, label, href }) => (
                 <a
                   key={label}
@@ -603,13 +603,17 @@ function ContactSection() {
               ))}
             </div>
 
-            {/* Office photo */}
-            <div className="overflow-hidden" style={{ marginTop: '8px' }}>
-              <img
-                src="https://images.unsplash.com/photo-1559564477-d5a61d8f77b6?w=500&h=300&fit=crop&auto=format"
-                alt="Oficina en el corazón de Sevilla"
-                className="w-full object-cover"
-                style={{ height: '180px' }}
+            {/* Office map */}
+            <div className="overflow-hidden rounded-lg shadow-sm" style={{ marginTop: '16px', height: '240px' }}>
+              <iframe
+                src="https://maps.google.com/maps?width=100%25&height=600&hl=es&q=Calle%20Cervantes,%2070,%20Coria%20del%20R%C3%ADo,%20Spain+(Julio%20Puig%20Real%20Estate)&t=&z=16&ie=UTF8&iwloc=B&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0, pointerEvents: 'auto' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Oficina Julio Puig Inmobiliaria"
               />
             </div>
           </div>

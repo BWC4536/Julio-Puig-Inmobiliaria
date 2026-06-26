@@ -448,7 +448,7 @@ function PropertyCarousel() {
               <div key={property.id} className="flex-none w-[300px] sm:w-[340px]">
                 <PropertyCard
                   property={property}
-                  onClick={() => navigate('/catalogo')}
+                  onClick={() => navigate(`/propiedad/${property.id}`)}
                 />
               </div>
             ))}

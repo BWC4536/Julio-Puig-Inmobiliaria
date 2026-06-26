@@ -425,7 +425,7 @@ export function CatalogoPage() {
                   </p>
                 </div>
                 <a
-                  href="https://wa.me/34600123456?text=Hola%20Julio%2C%20busco%20una%20propiedad%20y%20no%20la%20encuentro%20en%20el%20cat%C3%A1logo"
+                  href="https://wa.me/34633717714?text=Hola%20Julio%2C%20busco%20una%20propiedad%20y%20no%20la%20encuentro%20en%20el%20cat%C3%A1logo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-7 py-3 no-underline transition-opacity hover:opacity-90 whitespace-nowrap"

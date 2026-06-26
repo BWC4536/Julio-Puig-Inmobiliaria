@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router';
-import { Phone, Menu, X } from 'lucide-react';
+import { Menu, X, Phone, Instagram, Facebook } from 'lucide-react';
 
 const navLinks = [
   { to: '/inicio', label: 'Inicio' },
@@ -29,30 +29,8 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/inicio" className="flex flex-col leading-none gap-0.5 no-underline">
-          <span
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '11px',
-              fontWeight: 600,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: 'var(--primary)',
-            }}
-          >
-            Julio Puig
-          </span>
-          <span
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '10px',
-              fontStyle: 'italic',
-              letterSpacing: '0.08em',
-              color: 'var(--muted-foreground)',
-            }}
-          >
-            Real Estate · Sevilla
-          </span>
+        <Link to="/inicio" className="flex items-center no-underline">
+          <img src="/logo.png" alt="Julio Puig Real Estate" className="h-12 object-contain" />
         </Link>
 
         {/* Desktop nav */}
@@ -76,13 +54,21 @@ export function Navbar() {
 
         {/* Desktop right */}
         <div className="hidden md:flex items-center gap-5">
+          <div className="flex items-center gap-3">
+            <a href="https://www.instagram.com/juliopuig_agenteinmobiliario/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <Instagram size={18} strokeWidth={1.5} />
+            </a>
+            <a href="https://www.facebook.com/p/Julio-Puig-Colchero-Agente-Inmobiliario-100085542709383/?locale=es_ES" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <Facebook size={18} strokeWidth={1.5} />
+            </a>
+          </div>
           <a
-            href="tel:+34600123456"
+            href="tel:+34633717714"
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors no-underline"
             style={{ fontFamily: 'var(--font-body)', fontSize: '13px' }}
           >
             <Phone size={13} strokeWidth={1.5} />
-            <span>+34 600 123 456</span>
+            <span>+34 633 717 714</span>
           </a>
           <Link
             to="/nosotros#contacto"
@@ -112,7 +98,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-background border-t border-border px-6 py-6 flex flex-col gap-5">
+        <div className="md:hidden bg-background border-t border-border px-6 py-6 flex flex-col gap-5 shadow-lg">
           {navLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -130,17 +116,28 @@ export function Navbar() {
             </NavLink>
           ))}
           <hr className="border-border" />
+          
+          <div className="flex items-center gap-4 py-2 text-muted-foreground">
+            <a href="https://www.instagram.com/juliopuig_agenteinmobiliario/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <Instagram size={22} strokeWidth={1.5} />
+            </a>
+            <a href="https://www.facebook.com/p/Julio-Puig-Colchero-Agente-Inmobiliario-100085542709383/?locale=es_ES" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <Facebook size={22} strokeWidth={1.5} />
+            </a>
+          </div>
+
           <a
-            href="tel:+34600123456"
-            className="text-muted-foreground no-underline"
+            href="tel:+34633717714"
+            className="text-muted-foreground no-underline flex items-center gap-2"
             style={{ fontFamily: 'var(--font-body)', fontSize: '14px' }}
           >
-            +34 600 123 456
+            <Phone size={14} />
+            +34 633 717 714
           </a>
           <Link
             to="/nosotros#contacto"
             onClick={() => setMobileOpen(false)}
-            className="px-5 py-3 text-center no-underline"
+            className="px-5 py-3 text-center no-underline mt-2"
             style={{
               fontFamily: 'var(--font-body)',
               fontSize: '13px',

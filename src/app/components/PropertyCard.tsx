@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import { Bed, Bath, Maximize2, MessageCircle } from 'lucide-react';
 import type { Property } from './data';
 import { formatPrice } from './data';
@@ -22,10 +23,12 @@ interface Props {
 }
 
 export function PropertyCard({ property, onClick }: Props) {
+  const navigate = useNavigate();
+  const handleClick = onClick ?? (() => navigate(`/propiedad/${property.id}`));
   return (
     <div
       className="bg-card group cursor-pointer overflow-hidden transition-shadow duration-300 hover:shadow-xl"
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div className="relative overflow-hidden" style={{ aspectRatio: '4/3' }}>
         <img
@@ -35,7 +38,7 @@ export function PropertyCard({ property, onClick }: Props) {
         />
         {property.tag && <TagBadge tag={property.tag} />}
         <a
-          href={`https://wa.me/34600123456?text=Hola%20Julio%2C%20me%20interesa%20${encodeURIComponent(property.title)}`}
+          href={`https://wa.me/34633717714?text=Hola%20Julio%2C%20me%20interesa%20${encodeURIComponent(property.title)}`}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}

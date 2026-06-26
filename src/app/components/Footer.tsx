@@ -8,21 +8,16 @@ export function Footer() {
         {/* Brand */}
         <div className="flex flex-col gap-4">
           <div>
-            <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', opacity: 0.9 }}>
-              Julio Puig
-            </p>
-            <p style={{ fontFamily: 'var(--font-display)', fontSize: '10px', fontStyle: 'italic', opacity: 0.5, marginTop: '2px' }}>
-              Real Estate · Sevilla
-            </p>
+            <img src="/logo.png" alt="Julio Puig Real Estate" className="h-16 object-contain" />
           </div>
           <p style={{ fontSize: '13px', lineHeight: 1.7, opacity: 0.6, maxWidth: '260px' }}>
             Agencia boutique especializada en el Aljarafe sevillano. Más de 12 años poniendo familias en su hogar.
           </p>
           <div className="flex gap-4 mt-2">
-            <a href="#" aria-label="Instagram" style={{ opacity: 0.5 }} className="hover:opacity-100 transition-opacity">
+            <a href="https://www.instagram.com/juliopuig_agenteinmobiliario/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ opacity: 0.5 }} className="hover:opacity-100 transition-opacity">
               <Instagram size={16} />
             </a>
-            <a href="#" aria-label="Facebook" style={{ opacity: 0.5 }} className="hover:opacity-100 transition-opacity">
+            <a href="https://www.facebook.com/p/Julio-Puig-Colchero-Agente-Inmobiliario-100085542709383/?locale=es_ES" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ opacity: 0.5 }} className="hover:opacity-100 transition-opacity">
               <Facebook size={16} />
             </a>
           </div>
@@ -60,25 +55,31 @@ export function Footer() {
           </p>
           <div className="flex flex-col gap-3">
             <a
-              href="tel:+34600123456"
+              href="tel:+34633717714"
               className="flex items-center gap-3 no-underline hover:opacity-100 transition-opacity"
               style={{ fontSize: '13px', opacity: 0.6 }}
             >
               <Phone size={13} strokeWidth={1.5} />
-              +34 600 123 456
+              +34 633 717 714
             </a>
             <a
-              href="mailto:hola@juliopuig.es"
+              href="mailto:juliopuig.inmobiliaria@gmail.com"
               className="flex items-center gap-3 no-underline hover:opacity-100 transition-opacity"
               style={{ fontSize: '13px', opacity: 0.6 }}
             >
               <Mail size={13} strokeWidth={1.5} />
-              hola@juliopuig.es
+              juliopuig.inmobiliaria@gmail.com
             </a>
-            <div className="flex items-start gap-3" style={{ fontSize: '13px', opacity: 0.6 }}>
+            <a
+              href="https://maps.app.goo.gl/HYSv5ExywRBpZfgr9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start gap-3 hover:opacity-100 transition-opacity no-underline"
+              style={{ fontSize: '13px', opacity: 0.6 }}
+            >
               <MapPin size={13} strokeWidth={1.5} style={{ marginTop: '2px', flexShrink: 0 }} />
-              <span>Av. de la Borbolla 12, Bajo<br />41004 Sevilla, España</span>
-            </div>
+              <span>Calle Cervantes, 70<br />41100 Coria del Río, Spain</span>
+            </a>
           </div>
         </div>
       </div>

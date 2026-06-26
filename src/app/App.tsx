@@ -6,6 +6,13 @@ import { Footer } from './components/Footer';
 import { HomePage } from './components/pages/HomePage';
 import { CatalogoPage } from './components/pages/CatalogoPage';
 import { NosotrosPage } from './components/pages/NosotrosPage';
+import { PropertyDetailPage } from './components/pages/PropertyDetailPage';
+import { AdminLayout } from './components/admin/AdminLayout';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+import { AdminAnuncios } from './components/admin/AdminAnuncios';
+import { AdminContactos } from './components/admin/AdminContactos';
+import { AdminVistas } from './components/admin/AdminVistas';
+import { AdminLogin } from './components/admin/AdminLogin';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -18,7 +25,7 @@ function ScrollToTop() {
 function WhatsAppFAB() {
   return (
     <a
-      href="https://wa.me/34600123456?text=Hola%20Julio%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20sus%20propiedades"
+      href="https://wa.me/34633717714?text=Hola%20Julio%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20sus%20propiedades"
       target="_blank"
       rel="noopener noreferrer"
       className="fixed z-50 flex items-center justify-center rounded-full shadow-lg transition-transform hover:scale-110"
@@ -39,7 +46,7 @@ function WhatsAppFAB() {
   );
 }
 
-function Layout() {
+function PublicLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <ScrollToTop />
@@ -50,6 +57,7 @@ function Layout() {
           <Route path="/inicio" element={<HomePage />} />
           <Route path="/catalogo" element={<CatalogoPage />} />
           <Route path="/nosotros" element={<NosotrosPage />} />
+          <Route path="/propiedad/:id" element={<PropertyDetailPage />} />
           <Route path="*" element={<Navigate to="/inicio" replace />} />
         </Routes>
       </main>
@@ -62,7 +70,17 @@ function Layout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Layout />
+      <Routes>
+        {/* Admin routes — no Navbar/Footer */}
+        <Route path="/admin/*" element={<AdminLogin><AdminLayout /></AdminLogin>}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="anuncios" element={<AdminAnuncios />} />
+          <Route path="contactos" element={<AdminContactos />} />
+          <Route path="vistas" element={<AdminVistas />} />
+        </Route>
+        {/* Public site */}
+        <Route path="/*" element={<PublicLayout />} />
+      </Routes>
     </BrowserRouter>
   );
 }
