@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import * as Slider from '@radix-ui/react-slider';
 import { ArrowRight, Phone, Mail, MapPin, Home, TrendingUp, FileText, Shield } from 'lucide-react';
 
@@ -725,6 +726,20 @@ function ContactSection() {
 }
 
 export function NosotrosPage() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => element.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location.hash]);
+
   return (
     <>
       <AgentSection />
